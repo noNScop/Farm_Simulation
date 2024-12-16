@@ -24,14 +24,18 @@ class Tile {
                 result.append(agent);
             }
             // Adjust the width of a cell
-            for (int i = 0; i < width - getAgentsCount(); ++i) {
+            for (int i = 0; i < width - getTileWidth(); ++i) {
                 result.append(" ");
             }
             return result.toString();
         }
     }
 
-    public int getAgentsCount() {
-        return agents.size();
+    public int getTileWidth() {
+        int width = 0;
+        for (String agent : agents) {
+            width += agent.length();
+        }
+        return width;
     }
 }

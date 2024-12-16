@@ -2,7 +2,6 @@ package simulation;
 
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Random;
 
 import agents.Farmer;
 
@@ -11,7 +10,6 @@ public class Simulation {
     public List<Farmer> farmers = new LinkedList<>();
 
     public Simulation(int rows, int columns, int farmers) {
-        Random rand = new Random();
         field = new Field(rows, columns);
 
         for (int i = 0; i < farmers; ++i) {

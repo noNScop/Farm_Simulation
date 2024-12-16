@@ -29,14 +29,14 @@ public class Field {
     private List<Integer> getColumnWidth() {
         // calculate maximum number of agents in each column, adjust column width accordingly later
         // for better clarity of displayed field, if there is no agent in column put 1
-        List<Integer> maxAgents = new ArrayList<>();
+        List<Integer> columnWidth = new ArrayList<>();
         for (int i = 0; i < grid[0].length; ++i) {
-            maxAgents.add(1);
+            columnWidth.add(1);
             for (int j = 0; j < grid.length; ++j) {
-                maxAgents.set(i, Math.max(maxAgents.get(i), grid[j][i].getAgentsCount()));
+                columnWidth.set(i, Math.max(columnWidth.get(i), grid[j][i].getTileWidth()));
             }
         }
-        return maxAgents;
+        return columnWidth;
     }
 
     public void displayGrid() {
