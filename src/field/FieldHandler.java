@@ -51,28 +51,38 @@ public class FieldHandler {
         return patches.size();
     }
 
+    private void moveAgent(FieldEvent event) {
+        Agent agent = event.getAgent();
+        int old_x = event.getX();
+        int old_y = event.getY();
+        field.remove(old_x, old_y, agent.getSymbol());
+        field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
+    }
+
+    private void updateAgent(FieldEvent event) {
+        Agent agent = event.getAgent();
+        field.remove(agent.getX(), agent.getY(), event.getOldSymbol());
+        field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
+    }
+
+    private void updatePatch(FieldEvent event) {
+        Patch patch = event.getPatch();
+        field.remove(event.getX(), event.getY(), event.getOldSymbol());
+        field.emplace(event.getX(), event.getY(), patch.getSymbol());
+    }
+
     public void updateField() {
         while (!fieldObserver.isEmpty()) {
             FieldEvent event = fieldObserver.getNextEvent();
 
             if (event.getType() == FieldEvent.Type.MOVE) {
-                Agent agent = event.getAgent();
-                int old_x = event.getX();
-                int old_y = event.getY();
-                field.remove(old_x, old_y, agent.getSymbol());
-                field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
+                moveAgent(event);
             } else if (event.getType() == FieldEvent.Type.ADD_PATCH) {
                 addPatch(event.getX(), event.getY(), event.getPatch());
-            } else if (event.getType() == FieldEvent.Type.UPDATE) {
-                Patch patch = event.getPatch();
-                if (patch == null) {
-                    Agent agent = event.getAgent();
-                    field.remove(agent.getX(), agent.getY(), event.getOldSymbol());
-                    field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
-                } else {
-                    field.remove(event.getX(), event.getY(), event.getOldSymbol());
-                    field.emplace(event.getX(), event.getY(), patch.getSymbol());
-                }
+            } else if (event.getType() == FieldEvent.Type.UPDATE_PATCH) {
+                updatePatch(event);
+            } else if (event.getType() == FieldEvent.Type.UPDATE_AGENT) {
+                updateAgent(event);
             }
         }
     }
