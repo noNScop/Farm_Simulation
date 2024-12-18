@@ -1,4 +1,4 @@
-package simulation;
+package field;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -6,15 +6,50 @@ import java.util.List;
 import agents.Farmer;
 
 public class Field {
+    private static Field instance;
     private Tile[][] grid;
 
-    public Field(int rows, int columns) {
+    private Field(int rows, int columns) {
         grid = new Tile[rows][columns];
 
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns ; ++j) {
                 grid[i][j] = new Tile();
             }
+        }
+    }
+
+    public static void createInstance(int rows, int columns) {
+        // Only creates the instance if it hasn't been created yet
+        if (instance == null) {
+            instance = new Field(rows, columns);
+        }
+    }
+
+    public static void destroyInstance() {
+        instance = null;
+    }
+
+    public static Field getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Singleton Field not initialized. Call init() first.");
+        }
+        return instance;
+    }
+
+    public int getHeight() {
+        return grid.length;
+    }
+
+    public int getWidth() {
+        return grid[0].length;
+    }
+
+    public Boolean hasCarrots(int x, int y) {
+        if (grid[y][x].getAgents().contains("C")) {
+            return true;
+        } else {
+            return false;
         }
     }
 

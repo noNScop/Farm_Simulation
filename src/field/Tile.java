@@ -1,4 +1,4 @@
-package simulation;
+package field;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +26,19 @@ class Tile {
             // Adjust the width of a cell
             for (int i = 0; i < width - getTileWidth(); ++i) {
                 result.append(" ");
+            }
+            return result.toString();
+        }
+    }
+
+    public String getAgents() {
+        if (agents.isEmpty()) {
+            return " ";
+        } else {
+            StringBuilder result = new StringBuilder();
+
+            for (String agent : agents) {
+                result.append(agent);
             }
             return result.toString();
         }
