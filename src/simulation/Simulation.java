@@ -1,9 +1,7 @@
 package simulation;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.concurrent.CyclicBarrier;
 
 import agents.Agent;
 import agents.Patch;
@@ -24,7 +22,7 @@ public class Simulation {
 
         for (int i = 0; i < farmers; ++i) {
             this.agents.add(new Farmer(fieldObserver));
-            field.emplaceAgent(agents.get(i).getX(), agents.get(i).getY(), agents.get(i).getSymbol());
+            field.emplace(agents.get(i).getX(), agents.get(i).getY(), agents.get(i).getSymbol());
         }
         clearTerminal();
         field.displayGrid();
@@ -37,8 +35,22 @@ public class Simulation {
                 Agent agent = event.getAgent();
                 int old_x = event.getX();
                 int old_y = event.getY();
-                field.removeAgent(old_x, old_y, agent.getSymbol());
-                field.emplaceAgent(agent.getX(), agent.getY(), agent.getSymbol());
+                field.remove(old_x, old_y, agent.getSymbol());
+                field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
+            } else if (event.getType() == FieldEvent.Type.ADD_PATCH) {
+                Patch patch = event.getPatch();
+                patches.add(patch);
+                field.emplace(event.getX(), event.getY(), patch.getSymbol());
+            } else if (event.getType() == FieldEvent.Type.UPDATE) {
+                Patch patch = event.getPatch();
+                if (patch == null) {
+                    Agent agent = event.getAgent();
+                    field.remove(agent.getX(), agent.getY(), event.getOldSymbol());
+                    field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
+                } else {
+                    field.remove(event.getX(), event.getY(), event.getOldSymbol());
+                    field.emplace(event.getX(), event.getY(), patch.getSymbol());
+                }
             }
         }
         fieldObserver.clearEvents();
@@ -61,6 +73,10 @@ public class Simulation {
             }
         }
 
+        for (Patch patch : patches) {
+            patch.update();
+        }
+
         updateField();
         field.displayGrid();
     }
@@ -68,7 +84,7 @@ public class Simulation {
     public void runSimulation() {
         for (int i = 0; i < 100; ++i) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -1,9 +1,7 @@
 package field;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import agents.Farmer;
 
 public class Field {
     private static Field instance;
@@ -53,12 +51,12 @@ public class Field {
         }
     }
 
-    public void emplaceAgent(int x, int y, String symbol) {
-        grid[y][x].addAgent(symbol);
+    public void emplace(int x, int y, String symbol) {
+        grid[y][x].add(symbol);
     }
 
-    public void removeAgent(int x, int y, String symbol) {
-        grid[y][x].removeAgent(symbol);
+    public void remove(int x, int y, String symbol) {
+        grid[y][x].remove(symbol);
     }
 
     private List<Integer> getColumnWidth() {

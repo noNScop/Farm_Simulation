@@ -7,19 +7,43 @@ public class FieldEvent {
     public enum Type {
         MOVE,
         UPDATE,
-        ADD,
-        REMOVE
+        ADD_PATCH,
+        REMOVE_PATCH,
+        REMOVE_AGENT
     }
 
     private final Type eventType;
-    private final Agent agent;
-    private final int x;
-    private final int y;
+    private Agent agent;
+    private Patch patch;
+    private int x;
+    private int y;
+    private String oldSymbol;
 
     public FieldEvent(Type eventType, int x, int y, Agent agent) {
         this.eventType = eventType;
         this.x = x;
         this.y = y;
+        this.agent = agent;
+    }
+
+    public FieldEvent(Type eventType, int x, int y, Patch patch) {
+        this.eventType = eventType;
+        this.x = x;
+        this.y = y;
+        this.patch = patch;
+    }
+
+    public FieldEvent(int x, int y, String oldSymbol, Patch patch) {
+        eventType = Type.UPDATE;
+        this.x = x;
+        this.y = y;
+        this.oldSymbol = oldSymbol;
+        this.patch = patch;
+    }
+
+    public FieldEvent(String oldSymbol, Agent agent) {
+        eventType = Type.UPDATE;
+        this.oldSymbol = oldSymbol;
         this.agent = agent;
     }
 
@@ -37,5 +61,13 @@ public class FieldEvent {
 
     public Agent getAgent() {
         return agent;
+    }
+
+    public Patch getPatch() {
+        return patch;
+    }
+
+    public String getOldSymbol() {
+        return oldSymbol;
     }
 }

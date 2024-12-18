@@ -6,11 +6,11 @@ import java.util.List;
 class Tile {
     private List<String> agents = new LinkedList<>();
 
-    public void addAgent(String symbol) {
+    public void add(String symbol) {
         agents.add(symbol);
     }
 
-    public void removeAgent(String symbol) {
+    public void remove(String symbol) {
         agents.remove(symbol);
     }
 

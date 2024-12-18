@@ -5,4 +5,5 @@ package agents;
  */
 public interface Patch {
     public String getSymbol();
+    public void update();
 }

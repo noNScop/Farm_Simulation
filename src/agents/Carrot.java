@@ -1,19 +1,25 @@
 package agents;
 
+import field.FieldEvent;
+import field.FieldObserver;
+
 public class Carrot implements Patch {
     private int x;
     private int y;
     private String symbol;
     private int growthLeft;
+    private FieldObserver fieldObserver;
 
-    public Carrot(int x, int y) {
+    public Carrot(FieldObserver fieldObserver, int x, int y) {
+        this.fieldObserver = fieldObserver;
         this.x = x;
         this.y = y;
         growthLeft = 10;
         setSymbol();
     }
 
-    public Carrot(int x, int y, int growthTime) {
+    public Carrot(FieldObserver fieldObserver, int x, int y, int growthTime) {
+        this.fieldObserver = fieldObserver;
         this.x = x;
         this.y = y;
         growthLeft = growthTime;
@@ -33,10 +39,15 @@ public class Carrot implements Patch {
         return symbol;
     }
 
-    public void turn() {
+    @Override
+    public void update() {
         if (growthLeft != 0) {
+            String oldSymbol = symbol;
+
             --growthLeft;
             setSymbol();
+
+            fieldObserver.addEvent(new FieldEvent(x, y, oldSymbol, this));
         }
     }
 }

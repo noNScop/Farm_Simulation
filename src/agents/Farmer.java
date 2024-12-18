@@ -29,12 +29,11 @@ public class Farmer implements Agent {
 
     @Override
     public void run() {
-//        if (field.hasCarrots(x, y)) {
-//            move();
-//        } else {
-//                TODO carrot thing
-//        }
-        move();
+        if (field.hasCarrots(x, y)) {
+            move();
+        } else {
+            plantCarrots();
+        }
     }
 
     @Override
@@ -57,6 +56,7 @@ public class Farmer implements Agent {
     }
 
     public void move() {
+//        Store position of an agent before its move
         FieldEvent event = new FieldEvent(FieldEvent.Type.MOVE, x, y, this);
         // Randomly choose whether to move on the X axis (0) or Y axis (1)
         int axis = rand.nextInt(2);  // Generates either 0 or 1
@@ -65,10 +65,14 @@ public class Farmer implements Agent {
         if (axis == 0) {
             if (x + value < fieldColumns && x + value >= 0) {
                 x += value;
+            } else {
+                x -= value;
             }
         } else {
             if (y + value < fieldRows && y + value >= 0) {
                 y += value;
+            } else {
+                y -= value;
             }
         }
 //        Add the event once the move operation succeeds
@@ -76,7 +80,6 @@ public class Farmer implements Agent {
     }
 
     public void plantCarrots() {
-        Carrot carrots = new Carrot(getX(), getY());
-
+        fieldObserver.addEvent(new FieldEvent(FieldEvent.Type.ADD_PATCH, x, y, new Carrot(fieldObserver, x, y)));
     }
 }
