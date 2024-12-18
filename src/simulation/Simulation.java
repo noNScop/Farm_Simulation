@@ -1,65 +1,30 @@
 package simulation;
 
-import java.util.List;
-import java.util.LinkedList;
-
-import agents.Agent;
-import agents.Patch;
 import agents.Farmer;
 import field.Field;
-import field.FieldEvent;
+import field.FieldHandler;
 import field.FieldObserver;
 
 public class Simulation {
     public Field field;
-    private FieldObserver fieldObserver;
-    public List<Agent> agents = new LinkedList<>();
-    public List<Patch> patches = new LinkedList<>();
+    private final FieldHandler fieldHandler;
 
     public Simulation(int farmers) {
         field = Field.getInstance();
-        fieldObserver = new FieldObserver();
+        FieldObserver fieldObserver = new FieldObserver();
+        fieldHandler = new FieldHandler(fieldObserver);
 
         for (int i = 0; i < farmers; ++i) {
-            this.agents.add(new Farmer(fieldObserver));
-            field.emplace(agents.get(i).getX(), agents.get(i).getY(), agents.get(i).getSymbol());
+            fieldHandler.addAgent(new Farmer(fieldObserver));
         }
         clearTerminal();
         field.displayGrid();
     }
 
-    private void updateField() {
-        while (!fieldObserver.isEmpty()) {
-            FieldEvent event = fieldObserver.getNextEvent();
-
-            if (event.getType() == FieldEvent.Type.MOVE) {
-                Agent agent = event.getAgent();
-                int old_x = event.getX();
-                int old_y = event.getY();
-                field.remove(old_x, old_y, agent.getSymbol());
-                field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
-            } else if (event.getType() == FieldEvent.Type.ADD_PATCH) {
-                Patch patch = event.getPatch();
-                patches.add(patch);
-                field.emplace(event.getX(), event.getY(), patch.getSymbol());
-            } else if (event.getType() == FieldEvent.Type.UPDATE) {
-                Patch patch = event.getPatch();
-                if (patch == null) {
-                    Agent agent = event.getAgent();
-                    field.remove(agent.getX(), agent.getY(), event.getOldSymbol());
-                    field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
-                } else {
-                    field.remove(event.getX(), event.getY(), event.getOldSymbol());
-                    field.emplace(event.getX(), event.getY(), patch.getSymbol());
-                }
-            }
-        }
-    }
-
     public void step() {
-        Thread[] threads = new Thread[agents.size()];
-        for (int i = 0; i < agents.size(); ++i) {
-            threads[i] = new Thread(agents.get(i));
+        Thread[] threads = new Thread[fieldHandler.numAgents()];
+        for (int i = 0; i < fieldHandler.numAgents(); ++i) {
+            threads[i] = new Thread(fieldHandler.getAgent(i));
             threads[i].start();
         }
 
@@ -73,11 +38,11 @@ public class Simulation {
             }
         }
 
-        for (Patch patch : patches) {
-            patch.update();
+        for (int i = 0; i < fieldHandler.numPatches(); ++i) {
+            fieldHandler.getPatch(i).update();
         }
 
-        updateField();
+        fieldHandler.updateField();
         field.displayGrid();
     }
 
