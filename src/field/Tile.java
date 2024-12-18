@@ -14,19 +14,22 @@ class Tile {
         agents.remove(symbol);
     }
 
+    private StringBuilder getSymbols() {
+        StringBuilder result = new StringBuilder();
+
+        for (String agent : agents) {
+            result.append(agent);
+        }
+        return result;
+    }
+
     public String getAgents(int width) {
         if (agents.isEmpty()) {
             return " ".repeat(width);
         } else {
-            StringBuilder result = new StringBuilder();
-
-            for (String agent : agents) {
-                result.append(agent);
-            }
+            StringBuilder result = getSymbols();
             // Adjust the width of a cell
-            for (int i = 0; i < width - getTileWidth(); ++i) {
-                result.append(" ");
-            }
+            result.append(" ".repeat(Math.max(0, width - getTileWidth())));
             return result.toString();
         }
     }
@@ -35,12 +38,7 @@ class Tile {
         if (agents.isEmpty()) {
             return " ";
         } else {
-            StringBuilder result = new StringBuilder();
-
-            for (String agent : agents) {
-                result.append(agent);
-            }
-            return result.toString();
+            return getSymbols().toString();
         }
     }
 

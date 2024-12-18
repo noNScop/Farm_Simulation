@@ -29,8 +29,9 @@ public class Simulation {
     }
 
     private void updateField() {
-        List<FieldEvent> events = fieldObserver.getEvents();
-        for (FieldEvent event : events) {
+        while (!fieldObserver.isEmpty()) {
+            FieldEvent event = fieldObserver.getNextEvent();
+
             if (event.getType() == FieldEvent.Type.MOVE) {
                 Agent agent = event.getAgent();
                 int old_x = event.getX();
@@ -53,7 +54,6 @@ public class Simulation {
                 }
             }
         }
-        fieldObserver.clearEvents();
     }
 
     public void step() {

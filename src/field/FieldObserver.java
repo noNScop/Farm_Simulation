@@ -1,29 +1,25 @@
 package field;
 
-import agents.Carrot;
-import agents.Farmer;
-import jdk.jfr.Event;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FieldObserver {
-    private List<FieldEvent> events;
+    private final Queue<FieldEvent> events;
 
     public FieldObserver() {
-        events = new ArrayList<>();
+        events = new ConcurrentLinkedQueue<>();
     }
 
 //    synchronized because multiple agents can add events simultaneously
-    public synchronized void addEvent(FieldEvent event) {
-        events.add(event);
+    public void addEvent(FieldEvent event) {
+        events.offer(event);
     }
 
-    public List<FieldEvent> getEvents() {
-        return events;
+    public FieldEvent getNextEvent() {
+        return events.poll();
     }
 
-    public void clearEvents() {
-        events = new ArrayList<>();
+    public boolean isEmpty() {
+        return events.isEmpty();
     }
 }
