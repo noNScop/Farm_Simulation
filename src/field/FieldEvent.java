@@ -1,13 +1,11 @@
 package field;
 
 import agents.Agent;
-import agents.Patch;
+import patches.Patch;
 
 public class FieldEvent {
     public enum Type {
         MOVE,
-        UPDATE_PATCH,
-        UPDATE_AGENT,
         ADD_PATCH,
         REMOVE_PATCH,
         REMOVE_AGENT
@@ -16,9 +14,8 @@ public class FieldEvent {
     private final Type eventType;
     private Agent agent;
     private Patch patch;
-    private int x;
-    private int y;
-    private String oldSymbol;
+    private final int x;
+    private final int y;
 
     public FieldEvent(Type eventType, int x, int y, Agent agent) {
         this.eventType = eventType;
@@ -32,20 +29,6 @@ public class FieldEvent {
         this.x = x;
         this.y = y;
         this.patch = patch;
-    }
-
-    public FieldEvent(int x, int y, String oldSymbol, Patch patch) {
-        eventType = Type.UPDATE_PATCH;
-        this.x = x;
-        this.y = y;
-        this.oldSymbol = oldSymbol;
-        this.patch = patch;
-    }
-
-    public FieldEvent(String oldSymbol, Agent agent) {
-        eventType = Type.UPDATE_AGENT;
-        this.oldSymbol = oldSymbol;
-        this.agent = agent;
     }
 
     public Type getType() {
@@ -66,9 +49,5 @@ public class FieldEvent {
 
     public Patch getPatch() {
         return patch;
-    }
-
-    public String getOldSymbol() {
-        return oldSymbol;
     }
 }

@@ -1,7 +1,7 @@
 package field;
 
 import agents.Agent;
-import agents.Patch;
+import patches.Patch;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +19,12 @@ public class FieldHandler {
 
     public void addAgent(Agent agent) {
         agents.add(agent);
-        field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
+        field.addAgent(agent.getX(), agent.getY(), agent);
+    }
+
+    public void removeAgent(int x, int y, Agent agent) {
+        agents.remove(agent);
+        field.removeAgent(x, y, agent);
     }
 
     public Agent getAgent(int idx) {
@@ -36,7 +41,12 @@ public class FieldHandler {
 
     public void addPatch(int x, int y, Patch patch) {
         patches.add(patch);
-        field.emplace(x, y, patch.getSymbol());
+        field.emplacePatch(x, y, patch);
+    }
+
+    public void removePatch(int x, int y, Patch patch) {
+        patches.remove(patch);
+        field.removePatch(x, y);
     }
 
     public Patch getPatch(int idx) {
@@ -55,20 +65,8 @@ public class FieldHandler {
         Agent agent = event.getAgent();
         int old_x = event.getX();
         int old_y = event.getY();
-        field.remove(old_x, old_y, agent.getSymbol());
-        field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
-    }
-
-    private void updateAgent(FieldEvent event) {
-        Agent agent = event.getAgent();
-        field.remove(agent.getX(), agent.getY(), event.getOldSymbol());
-        field.emplace(agent.getX(), agent.getY(), agent.getSymbol());
-    }
-
-    private void updatePatch(FieldEvent event) {
-        Patch patch = event.getPatch();
-        field.remove(event.getX(), event.getY(), event.getOldSymbol());
-        field.emplace(event.getX(), event.getY(), patch.getSymbol());
+        field.removeAgent(old_x, old_y, agent);
+        field.addAgent(agent.getX(), agent.getY(), agent);
     }
 
     public void updateField() {
@@ -79,10 +77,6 @@ public class FieldHandler {
                 moveAgent(event);
             } else if (event.getType() == FieldEvent.Type.ADD_PATCH) {
                 addPatch(event.getX(), event.getY(), event.getPatch());
-            } else if (event.getType() == FieldEvent.Type.UPDATE_PATCH) {
-                updatePatch(event);
-            } else if (event.getType() == FieldEvent.Type.UPDATE_AGENT) {
-                updateAgent(event);
             }
         }
     }

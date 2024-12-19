@@ -1,4 +1,4 @@
-package agents;
+package patches;
 
 /**
  * Represents a stationary environment element (Patch).

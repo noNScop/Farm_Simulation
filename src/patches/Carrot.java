@@ -1,14 +1,13 @@
-package agents;
+package patches;
 
-import field.FieldEvent;
 import field.FieldObserver;
 
 public class Carrot implements Patch {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
     private String symbol;
     private int growthLeft;
-    private FieldObserver fieldObserver;
+    private final FieldObserver fieldObserver;
 
     public Carrot(FieldObserver fieldObserver, int x, int y) {
         this.fieldObserver = fieldObserver;
@@ -46,8 +45,6 @@ public class Carrot implements Patch {
 
             --growthLeft;
             setSymbol();
-
-            fieldObserver.addEvent(new FieldEvent(x, y, oldSymbol, this));
         }
     }
 }

@@ -1,51 +1,90 @@
 package field;
 
+import agents.Agent;
+import patches.Patch;
+
 import java.util.LinkedList;
 import java.util.List;
 
 class Tile {
-    private List<String> agents = new LinkedList<>();
+    private Patch patch;
+    private final List<Agent> agents;
 
-    public void add(String symbol) {
-        agents.add(symbol);
+    Tile() {
+        agents = new LinkedList<>();
     }
 
-    public void remove(String symbol) {
-        agents.remove(symbol);
+    public void addAgent(Agent agent) {
+        agents.add(agent);
     }
 
-    private StringBuilder getSymbols() {
+    public void removeAgent(Agent agent) {
+        agents.remove(agent);
+    }
+
+    public void emplacePatch(Patch patch) {
+        if (this.patch == null) {
+            this.patch = patch;
+        } else {
+            throw new IllegalStateException("Tile already contains a patch. Only one patch is allowed per tile.");
+        }
+    }
+
+    public void removePatch() {
+        patch = null;
+    }
+
+    public boolean hasPatch(Class<?> type) {
+        if (patch == null) {
+            return false;
+        } else {
+            return type.isInstance(patch);
+        }
+    }
+
+    public boolean hasAgent(Class<?> type) {
+        for (Agent agent : agents) {
+            if (type.isInstance(agent)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private StringBuilder buildSymbols() {
         StringBuilder result = new StringBuilder();
 
-        for (String agent : agents) {
-            result.append(agent);
+        for (Agent agent : agents) {
+            result.append(agent.getSymbol());
+        }
+        if (patch != null) {
+            result.append(patch.getSymbol());
         }
         return result;
     }
 
-    public String getAgents(int width) {
-        if (agents.isEmpty()) {
+    public String getSymbols(int width) {
+        if (agents.isEmpty() && patch == null) {
             return " ".repeat(width);
         } else {
-            StringBuilder result = getSymbols();
+            StringBuilder result = buildSymbols();
             // Adjust the width of a cell
             result.append(" ".repeat(Math.max(0, width - getTileWidth())));
             return result.toString();
         }
     }
 
-    public String getAgents() {
-        if (agents.isEmpty()) {
-            return " ";
-        } else {
-            return getSymbols().toString();
-        }
+    public String getSymbols() {
+        return buildSymbols().toString();
     }
 
     public int getTileWidth() {
         int width = 0;
-        for (String agent : agents) {
-            width += agent.length();
+        for (Agent agent : agents) {
+            width += agent.getSymbol().length();
+        }
+        if (patch != null) {
+            width += patch.getSymbol().length();
         }
         return width;
     }

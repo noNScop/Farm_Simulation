@@ -4,16 +4,17 @@ import java.util.Random;
 import field.Field;
 import field.FieldEvent;
 import field.FieldObserver;
+import patches.Carrot;
 
 public class Farmer implements Agent {
-    private Random rand;
+    private final Random rand;
     private int x;
     private int y;
     private final int fieldColumns;
     private final int fieldRows;
-    private String symbol;
-    private Field field;
-    private FieldObserver fieldObserver;
+    private final String symbol;
+    private final Field field;
+    private final FieldObserver fieldObserver;
 
     public Farmer(FieldObserver fieldObserver) {
         rand = new Random();
@@ -29,7 +30,7 @@ public class Farmer implements Agent {
 
     @Override
     public void run() {
-        if (field.hasCarrots(x, y)) {
+        if (field.hasPatch(x, y, Carrot.class)) {
             move();
         } else {
             plantCarrots();
@@ -44,10 +45,6 @@ public class Farmer implements Agent {
     @Override
     public int getY() {
         return y;
-    }
-
-    private void setSymbol() {
-
     }
 
     @Override

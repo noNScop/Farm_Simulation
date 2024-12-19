@@ -1,11 +1,14 @@
 package field;
 
+import agents.Agent;
+import patches.Patch;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Field {
     private static Field instance;
-    private Tile[][] grid;
+    private final Tile[][] grid;
 
     private Field(int rows, int columns) {
         grid = new Tile[rows][columns];
@@ -43,20 +46,28 @@ public class Field {
         return grid[0].length;
     }
 
-    public Boolean hasCarrots(int x, int y) {
-        if (grid[y][x].getAgents().contains("C")) {
-            return true;
-        } else {
-            return false;
-        }
+    public Boolean hasAgent(int x, int y, Class<?> type) {
+        return grid[y][x].hasAgent(type);
     }
 
-    public void emplace(int x, int y, String symbol) {
-        grid[y][x].add(symbol);
+    public Boolean hasPatch(int x, int y, Class<?> type) {
+        return grid[y][x].hasPatch(type);
     }
 
-    public void remove(int x, int y, String symbol) {
-        grid[y][x].remove(symbol);
+    public void addAgent(int x, int y, Agent agent) {
+        grid[y][x].addAgent(agent);
+    }
+
+    public void removeAgent(int x, int y, Agent agent) {
+        grid[y][x].removeAgent(agent);
+    }
+
+    public void emplacePatch(int x, int y, Patch patch) {
+        grid[y][x].emplacePatch(patch);
+    }
+
+    public void removePatch(int x, int y) {
+        grid[y][x].removePatch();
     }
 
     private List<Integer> getColumnWidth() {
@@ -76,7 +87,7 @@ public class Field {
         List<Integer> columnWidth = getColumnWidth();
         for (int i = 0; i < grid.length; ++i) {
             for (int j = 0; j < grid[0].length; ++j) {
-                System.out.print('[' + grid[i][j].getAgents(columnWidth.get(j)) + ']');
+                System.out.print('[' + grid[i][j].getSymbols(columnWidth.get(j)) + ']');
             }
             System.out.println();
         }
