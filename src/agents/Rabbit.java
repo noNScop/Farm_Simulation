@@ -1,23 +1,22 @@
 //package agents;
 //
+//import java.util.Random;
 //import field.Field;
 //import field.FieldEvent;
 //import field.FieldObserver;
 //import patches.Carrot;
 //
-//import java.util.Random;
-//
-//public class Rabbit implements Agent {
-//    private Random rand;
+//public class Farmer implements Agent {
+//    private final Random rand;
 //    private int x;
 //    private int y;
 //    private final int fieldColumns;
 //    private final int fieldRows;
-//    private String symbol;
-//    private Field field;
-//    private FieldObserver fieldObserver;
+//    private final String symbol;
+//    private final Field field;
+//    private final FieldObserver fieldObserver;
 //
-//    public Rabbit(FieldObserver fieldObserver) {
+//    public Farmer(FieldObserver fieldObserver) {
 //        rand = new Random();
 //        field = Field.getInstance();
 //        fieldRows = field.getHeight();
@@ -46,10 +45,6 @@
 //    @Override
 //    public int getY() {
 //        return y;
-//    }
-//
-//    private void setSymbol() {
-//
 //    }
 //
 //    @Override
