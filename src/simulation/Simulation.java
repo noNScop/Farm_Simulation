@@ -1,18 +1,26 @@
 package simulation;
 
 import agents.Farmer;
+import agents.Rabbit;
 import field.Field;
 import field.FieldHandler;
 import field.FieldObserver;
 
-public class Simulation {
-    public Field field;
-    private final FieldHandler fieldHandler;
+import java.util.Random;
 
-    public Simulation(int farmers) {
+public class Simulation {
+    private final Random rand;
+    public Field field;
+    private final FieldObserver fieldObserver;
+    private final FieldHandler fieldHandler;
+    private final double rabbitSpawnProbability;
+
+    public Simulation(int farmers, double rabbitSpawnProbability) {
+        rand = new Random();
         field = Field.getInstance();
-        FieldObserver fieldObserver = new FieldObserver();
+        fieldObserver = new FieldObserver();
         fieldHandler = new FieldHandler(fieldObserver);
+        this.rabbitSpawnProbability = rabbitSpawnProbability;
 
         for (int i = 0; i < farmers; ++i) {
             fieldHandler.addAgent(new Farmer(fieldObserver));
@@ -22,6 +30,10 @@ public class Simulation {
     }
 
     public void step() {
+        if (rabbitSpawnProbability > rand.nextDouble()) {
+            fieldHandler.addAgent(new Rabbit(fieldObserver));
+        }
+
         Thread[] threads = new Thread[fieldHandler.numAgents()];
         for (int i = 0; i < fieldHandler.numAgents(); ++i) {
             threads[i] = new Thread(fieldHandler.getAgent(i));

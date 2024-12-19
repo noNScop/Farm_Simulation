@@ -77,6 +77,8 @@ public class FieldHandler {
                 moveAgent(event);
             } else if (event.getType() == FieldEvent.Type.ADD_PATCH) {
                 addPatch(event.getX(), event.getY(), event.getPatch());
+            } else if (event.getType() == FieldEvent.Type.REMOVE_PATCH) {
+                removePatch(event.getX(), event.getY(), event.getPatch());
             }
         }
     }

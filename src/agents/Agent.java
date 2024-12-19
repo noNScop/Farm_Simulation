@@ -10,7 +10,7 @@ import java.util.Random;
  * Represents a movable entity (Agent) capable of performing actions. Each Agent is operating on a separate thread.
  */
 public abstract class Agent implements Runnable {
-    private final Random rand;
+    protected final Random rand;
     protected int x;
     protected int y;
     private final int fieldColumns;

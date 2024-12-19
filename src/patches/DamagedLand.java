@@ -1,15 +1,15 @@
 package patches;
 
+import agents.Farmer;
 import field.FieldObserver;
 
 public class DamagedLand extends Patch {
     private int damageLeft;
     private final int fullDamage;
-    private boolean repairStatus;
+    private Farmer repairFarmer;
 
     public DamagedLand(FieldObserver fieldObserver) {
         super(fieldObserver);
-        repairStatus = false;
         fullDamage = 3;
         damageLeft = fullDamage;
         setSymbol();
@@ -17,7 +17,6 @@ public class DamagedLand extends Patch {
 
     public DamagedLand(FieldObserver fieldObserver, int damageRepairTime) {
         super(fieldObserver);
-        repairStatus = false;
         fullDamage = damageRepairTime;
         damageLeft = fullDamage;
         setSymbol();
@@ -32,8 +31,12 @@ public class DamagedLand extends Patch {
         }
     }
 
-    public void setRepairStatus(boolean value) {
-        repairStatus = value;
+    public void setRepairFarmer(Farmer farmer) {
+        repairFarmer = farmer;
+    }
+
+    public Farmer getRepairFarmer() {
+        return repairFarmer;
     }
 
     public boolean isRepaired() {
@@ -42,7 +45,7 @@ public class DamagedLand extends Patch {
 
     @Override
     public void update() {
-        if (repairStatus) {
+        if (repairFarmer != null) {
             --damageLeft;
             setSymbol();
         }

@@ -22,7 +22,7 @@ public class Carrot extends Patch {
         if (growthLeft == 0) {
             symbol = "C";
         } else {
-            symbol = "C(" + growthLeft + ")";
+            symbol = ",";
         }
     }
 

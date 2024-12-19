@@ -3,6 +3,8 @@ package agents;
 import field.FieldEvent;
 import field.FieldObserver;
 import patches.Carrot;
+import patches.DamagedLand;
+import patches.Patch;
 
 public class Farmer extends Agent {
     public Farmer(FieldObserver fieldObserver) {
@@ -17,14 +19,28 @@ public class Farmer extends Agent {
 
     @Override
     public void run() {
-        if (field.hasPatch(x, y, Carrot.class)) {
-            move();
-        } else {
+        Patch patch = field.getPatch(x, y);
+        if (patch == null) {
             plantCarrots();
+        } else if (patch instanceof DamagedLand land) {
+            fixLand(land);
+        } else {
+            move();
         }
     }
 
-    public void plantCarrots() {
+    private void plantCarrots() {
         fieldObserver.addEvent(new FieldEvent(FieldEvent.Type.ADD_PATCH, x, y, new Carrot(fieldObserver)));
+    }
+
+    private void fixLand(DamagedLand land) {
+        Farmer repairFarmer = land.getRepairFarmer();
+        if (repairFarmer == this) {
+            if (land.isRepaired()) {
+                fieldObserver.addEvent(new FieldEvent(FieldEvent.Type.REMOVE_PATCH, x, y, field.getPatch(x, y)));
+            }
+        } else if (repairFarmer == null) {
+            land.setRepairFarmer(this);
+        }
     }
 }
