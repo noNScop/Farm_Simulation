@@ -14,15 +14,15 @@ class Tile {
         agents = new LinkedList<>();
     }
 
-    public void addAgent(Agent agent) {
+    void addAgent(Agent agent) {
         agents.add(agent);
     }
 
-    public void removeAgent(Agent agent) {
+    void removeAgent(Agent agent) {
         agents.remove(agent);
     }
 
-    public void emplacePatch(Patch patch) {
+    void emplacePatch(Patch patch) {
         if (this.patch == null) {
             this.patch = patch;
         } else {
@@ -30,11 +30,29 @@ class Tile {
         }
     }
 
-    public void removePatch() {
+    void removePatch() {
         patch = null;
     }
 
-    public boolean hasPatch(Class<?> type) {
+    boolean hasAgent(Class<?> type) {
+        for (Agent agent : agents) {
+            if (type.isInstance(agent)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Agent getAgent(Class<?> type) {
+        for (Agent agent : agents) {
+            if (type.isInstance(agent)) {
+                return agent;
+            }
+        }
+        return null;
+    }
+
+    boolean hasPatch(Class<?> type) {
         if (patch == null) {
             return false;
         } else {
@@ -42,13 +60,8 @@ class Tile {
         }
     }
 
-    public boolean hasAgent(Class<?> type) {
-        for (Agent agent : agents) {
-            if (type.isInstance(agent)) {
-                return true;
-            }
-        }
-        return false;
+    Patch getPatch() {
+        return patch;
     }
 
     private StringBuilder buildSymbols() {
@@ -63,7 +76,7 @@ class Tile {
         return result;
     }
 
-    public String getSymbols(int width) {
+    String getSymbols(int width) {
         if (agents.isEmpty() && patch == null) {
             return " ".repeat(width);
         } else {
@@ -74,11 +87,7 @@ class Tile {
         }
     }
 
-    public String getSymbols() {
-        return buildSymbols().toString();
-    }
-
-    public int getTileWidth() {
+    int getTileWidth() {
         int width = 0;
         for (Agent agent : agents) {
             width += agent.getSymbol().length();

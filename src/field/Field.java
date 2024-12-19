@@ -50,8 +50,16 @@ public class Field {
         return grid[y][x].hasAgent(type);
     }
 
+    public Agent getAgent(int x, int y, Class<?> type) {
+        return grid[y][x].getAgent(type);
+    }
+
     public Boolean hasPatch(int x, int y, Class<?> type) {
         return grid[y][x].hasPatch(type);
+    }
+
+    public Patch getPatch(int x, int y) {
+        return grid[y][x].getPatch();
     }
 
     public void addAgent(int x, int y, Agent agent) {

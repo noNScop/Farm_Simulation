@@ -7,8 +7,10 @@ import patches.Carrot;
 public class Farmer extends Agent {
     public Farmer(FieldObserver fieldObserver) {
         super(fieldObserver);
+        setSymbol();
     }
 
+    @Override
     protected void setSymbol() {
         symbol = "F";
     }
@@ -23,6 +25,6 @@ public class Farmer extends Agent {
     }
 
     public void plantCarrots() {
-        fieldObserver.addEvent(new FieldEvent(FieldEvent.Type.ADD_PATCH, x, y, new Carrot(fieldObserver, x, y)));
+        fieldObserver.addEvent(new FieldEvent(FieldEvent.Type.ADD_PATCH, x, y, new Carrot(fieldObserver)));
     }
 }

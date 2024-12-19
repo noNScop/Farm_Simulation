@@ -27,7 +27,6 @@ public abstract class Agent implements Runnable {
 
         x = rand.nextInt(fieldColumns);
         y = rand.nextInt(fieldRows);
-        setSymbol();
         this.fieldObserver = fieldObserver;
     }
 
@@ -44,6 +43,7 @@ public abstract class Agent implements Runnable {
     }
 
     protected abstract void setSymbol();
+    public abstract void run();
 
     protected void move() {
 //        Store position of an agent before its move

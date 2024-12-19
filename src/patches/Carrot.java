@@ -2,30 +2,23 @@ package patches;
 
 import field.FieldObserver;
 
-public class Carrot implements Patch {
-    private final int x;
-    private final int y;
-    private String symbol;
+public class Carrot extends Patch {
     private int growthLeft;
-    private final FieldObserver fieldObserver;
 
-    public Carrot(FieldObserver fieldObserver, int x, int y) {
-        this.fieldObserver = fieldObserver;
-        this.x = x;
-        this.y = y;
+    public Carrot(FieldObserver fieldObserver) {
+        super(fieldObserver);
         growthLeft = 10;
         setSymbol();
     }
 
-    public Carrot(FieldObserver fieldObserver, int x, int y, int growthTime) {
-        this.fieldObserver = fieldObserver;
-        this.x = x;
-        this.y = y;
+    public Carrot(FieldObserver fieldObserver, int growthTime) {
+        super(fieldObserver);
         growthLeft = growthTime;
         setSymbol();
     }
 
-    private void setSymbol() {
+    @Override
+    protected void setSymbol() {
         if (growthLeft == 0) {
             symbol = "C";
         } else {
@@ -33,16 +26,13 @@ public class Carrot implements Patch {
         }
     }
 
-    @Override
-    public String getSymbol() {
-        return symbol;
+    public boolean isRipe() {
+        return growthLeft == 0;
     }
 
     @Override
     public void update() {
         if (growthLeft != 0) {
-            String oldSymbol = symbol;
-
             --growthLeft;
             setSymbol();
         }
