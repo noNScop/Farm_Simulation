@@ -3,6 +3,7 @@ package field;
 import agents.Agent;
 import patches.Patch;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class FieldHandler {
     }
 
     public void removeAgent(int x, int y, Agent agent) {
+        agent.destroy();
         agents.remove(agent);
         field.removeAgent(x, y, agent);
     }
@@ -63,6 +65,10 @@ public class FieldHandler {
 
     private void moveAgent(FieldEvent event) {
         Agent agent = event.getAgent();
+        if (agent.isDestroyed()) {
+            return;
+        }
+
         int old_x = event.getX();
         int old_y = event.getY();
         field.removeAgent(old_x, old_y, agent);
@@ -79,6 +85,8 @@ public class FieldHandler {
                 addPatch(event.getX(), event.getY(), event.getPatch());
             } else if (event.getType() == FieldEvent.Type.REMOVE_PATCH) {
                 removePatch(event.getX(), event.getY(), event.getPatch());
+            } else if (event.getType() == FieldEvent.Type.REMOVE_AGENT) {
+                removeAgent(event.getX(), event.getY(), event.getAgent());
             }
         }
     }

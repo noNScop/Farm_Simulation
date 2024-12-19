@@ -11,10 +11,11 @@ import java.util.Random;
  */
 public abstract class Agent implements Runnable {
     protected final Random rand;
+    private boolean destroyed;
     protected int x;
     protected int y;
-    private final int fieldColumns;
-    private final int fieldRows;
+    protected final int fieldColumns;
+    protected final int fieldRows;
     protected String symbol;
     protected final Field field;
     protected final FieldObserver fieldObserver;
@@ -28,6 +29,14 @@ public abstract class Agent implements Runnable {
         x = rand.nextInt(fieldColumns);
         y = rand.nextInt(fieldRows);
         this.fieldObserver = fieldObserver;
+    }
+
+    public void destroy() {
+        destroyed = true;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
     public int getX() {

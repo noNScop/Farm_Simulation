@@ -1,12 +1,15 @@
 package simulation;
 
+import agents.Dog;
 import agents.Farmer;
 import agents.Rabbit;
 import field.Field;
 import field.FieldHandler;
 import field.FieldObserver;
 
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class Simulation {
     private final Random rand;
@@ -22,8 +25,10 @@ public class Simulation {
         fieldHandler = new FieldHandler(fieldObserver);
         this.rabbitSpawnProbability = rabbitSpawnProbability;
 
-        for (int i = 0; i < farmers; ++i) {
-            fieldHandler.addAgent(new Farmer(fieldObserver));
+        for (int i = 0; i < farmers; ++i) {// Start with the semaphore blocked
+            Farmer farmer = new Farmer(fieldObserver);
+            fieldHandler.addAgent(farmer);
+            fieldHandler.addAgent(new Dog(fieldObserver, farmer));
         }
         clearTerminal();
         field.displayGrid();

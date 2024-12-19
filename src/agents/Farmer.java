@@ -7,8 +7,15 @@ import patches.DamagedLand;
 import patches.Patch;
 
 public class Farmer extends Agent {
+//    store coordinates before thr turn, so dog can correctly check if farmer encountered
+//    rabbit (in previous simulation step)
+    private int oldX;
+    private int oldY;
+
     public Farmer(FieldObserver fieldObserver) {
         super(fieldObserver);
+        oldX = x;
+        oldY = y;
         setSymbol();
     }
 
@@ -19,6 +26,8 @@ public class Farmer extends Agent {
 
     @Override
     public void run() {
+        oldX = x;
+        oldY = y;
         Patch patch = field.getPatch(x, y);
         if (patch == null) {
             plantCarrots();
@@ -42,5 +51,13 @@ public class Farmer extends Agent {
         } else if (repairFarmer == null) {
             land.setRepairFarmer(this);
         }
+    }
+
+    public int getOldX() {
+        return oldX;
+    }
+
+    public int getOldY() {
+        return oldY;
     }
 }
