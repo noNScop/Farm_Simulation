@@ -3,8 +3,14 @@ package agents;
 import field.Field;
 import field.FieldEvent;
 import field.FieldObserver;
+import simulation.Simulation;
+import simulation.ThreadManager;
 
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Represents a movable entity (Agent) capable of performing actions. Each Agent is operating on a separate thread.
@@ -19,8 +25,11 @@ public abstract class Agent implements Runnable {
     protected String symbol;
     protected final Field field;
     protected final FieldObserver fieldObserver;
+    private final ThreadManager threadManager;
+    private final ReentrantLock turnLock;
+    private final ReentrantLock agentLock;
 
-    protected Agent (FieldObserver fieldObserver) {
+    protected Agent (FieldObserver fieldObserver, ThreadManager threadManager) {
         rand = new Random();
         field = Field.getInstance();
         fieldRows = field.getHeight();
@@ -29,6 +38,9 @@ public abstract class Agent implements Runnable {
         x = rand.nextInt(fieldColumns);
         y = rand.nextInt(fieldRows);
         this.fieldObserver = fieldObserver;
+        this.threadManager = threadManager;
+        turnLock = threadManager.getTurnLock();
+        agentLock = threadManager.getAgentLock();
     }
 
     public void destroy() {
@@ -51,8 +63,44 @@ public abstract class Agent implements Runnable {
         return symbol;
     }
 
+    public void run() {
+        while (true) {
+            turnLock.lock();
+            try {
+                while(!threadManager.hasTurnStarted()) {
+                    threadManager.getTurnStartCondition().await();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            } finally {
+                turnLock.unlock();
+            }
+
+            if (!threadManager.getSimulationStatus() || isDestroyed()) {
+                break;
+            }
+            
+            step();
+
+            threadManager.decrementAgentsRunning();
+
+            agentLock.lock();
+            try {
+                while(threadManager.areAgentsRunning()) {
+                    threadManager.getAgentsFinishedCondition().await();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            } finally {
+                agentLock.unlock();
+            }
+        }
+    }
+
     protected abstract void setSymbol();
-    public abstract void run();
+    protected abstract void step();
 
     protected void move() {
 //        Store position of an agent before its move

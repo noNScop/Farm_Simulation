@@ -5,6 +5,9 @@ import field.FieldObserver;
 import patches.Carrot;
 import patches.DamagedLand;
 import patches.Patch;
+import simulation.ThreadManager;
+
+import java.util.concurrent.locks.Condition;
 
 public class Farmer extends Agent {
 //    store coordinates before thr turn, so dog can correctly check if farmer encountered
@@ -12,8 +15,8 @@ public class Farmer extends Agent {
     private int oldX;
     private int oldY;
 
-    public Farmer(FieldObserver fieldObserver) {
-        super(fieldObserver);
+    public Farmer(FieldObserver fieldObserver, ThreadManager threadManager) {
+        super(fieldObserver, threadManager);
         oldX = x;
         oldY = y;
         setSymbol();
@@ -25,7 +28,7 @@ public class Farmer extends Agent {
     }
 
     @Override
-    public void run() {
+    public void step() {
         oldX = x;
         oldY = y;
         Patch patch = field.getPatch(x, y);

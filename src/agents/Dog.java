@@ -2,20 +2,22 @@ package agents;
 
 import field.FieldEvent;
 import field.FieldObserver;
+import simulation.ThreadManager;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
 
 public class Dog extends Agent {
     private final Farmer owner;
     private boolean ownerOrder;
     private Rabbit prey;
 
-    public Dog(FieldObserver fieldObserver, Farmer farmer) {
-        super(fieldObserver);
+    public Dog(FieldObserver fieldObserver, ThreadManager threadManager, Farmer farmer) {
+        super(fieldObserver, threadManager);
         owner = farmer;
         ownerOrder = false;
         setSymbol();
@@ -40,7 +42,7 @@ public class Dog extends Agent {
     }
 
     @Override
-    public void run() {
+    public void step() {
 //        if dog has no active order from its master, check if he didn't spot a rabbit,
 //        otherwise focus on the task
         if (!ownerOrder) {
