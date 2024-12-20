@@ -2,6 +2,11 @@ package patches;
 
 import field.FieldObserver;
 
+/**
+ * The Carrot patch (",") grows over time, reducing its growth time until it ripens ("C").
+ * Once ripe, it can be eaten by rabbits. The growth process is tracked with `growthLeft`, which
+ * decreases every update. The patch becomes ready to eat when `growthLeft` reaches zero.
+ */
 public class Carrot extends Patch {
     private int growthLeft;
 

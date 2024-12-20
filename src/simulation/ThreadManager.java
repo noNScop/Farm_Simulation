@@ -1,11 +1,5 @@
 package simulation;
 
-import agents.Agent;
-import field.FieldHandler;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 

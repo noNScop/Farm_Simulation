@@ -3,6 +3,13 @@ package field;
 import agents.Agent;
 import patches.Patch;
 
+/**
+ * The FieldEvent class represents an event that occurs in the simulation field, such as moving an agent,
+ * adding or removing a patch, or removing an agent. The event stores the type of the event, the coordinates
+ * (x, y) where the event occurs, and either the associated agent or patch involved in the event.
+
+ * It serves the purpose of allowing communication between the agents and the field
+ */
 public class FieldEvent {
     public enum Type {
         MOVE,

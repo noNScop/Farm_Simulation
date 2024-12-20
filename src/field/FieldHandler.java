@@ -3,10 +3,18 @@ package field;
 import agents.Agent;
 import patches.Patch;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The FieldHandler class manages interactions between agents and patches in the field.
+ * It provides methods to add, remove, and retrieve agents and patches from the field.
+ * Additionally, it is responsible for updating the state of the field based on events
+ * (such as agent movements and patch additions/removals) provided by the fieldObserver.
+
+ * This class also ensures that all operations on agents and patches are properly reflected
+ * in the underlying field grid, providing synchronization between agent state and the environment.
+ */
 public class FieldHandler {
     private final FieldObserver fieldObserver;
     private final Field field;
@@ -79,14 +87,11 @@ public class FieldHandler {
         while (!fieldObserver.isEmpty()) {
             FieldEvent event = fieldObserver.getNextEvent();
 
-            if (event.getType() == FieldEvent.Type.MOVE) {
-                moveAgent(event);
-            } else if (event.getType() == FieldEvent.Type.ADD_PATCH) {
-                addPatch(event.getX(), event.getY(), event.getPatch());
-            } else if (event.getType() == FieldEvent.Type.REMOVE_PATCH) {
-                removePatch(event.getX(), event.getY(), event.getPatch());
-            } else if (event.getType() == FieldEvent.Type.REMOVE_AGENT) {
-                removeAgent(event.getX(), event.getY(), event.getAgent());
+            switch (event.getType()) {
+                case MOVE -> moveAgent(event);
+                case ADD_PATCH -> addPatch(event.getX(), event.getY(), event.getPatch());
+                case REMOVE_PATCH -> removePatch(event.getX(), event.getY(), event.getPatch());
+                case REMOVE_AGENT -> removeAgent(event.getX(), event.getY(), event.getAgent());
             }
         }
     }

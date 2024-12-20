@@ -6,6 +6,12 @@ import patches.Patch;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Field class represents the simulation grid where agents and patches are placed. It follows a Singleton pattern,
+ * ensuring only one instance of the field exists. The field is structured as a 2D array of Tiles, where each tile
+ * may contain an Agents and/or a Patch. The class provides methods to access and modify agents and patches, as well
+ * as display the current state of the grid. It also handles the layout of columns for better display clarity.
+ */
 public class Field {
     private static Field instance;
     private final Tile[][] grid;
@@ -21,7 +27,7 @@ public class Field {
     }
 
     public static void createInstance(int rows, int columns) {
-        // Only creates the instance if it hasn't been created yet
+        // Only creates the instance if it hasn't been created yet, singleton like behaviour
         if (instance == null) {
             instance = new Field(rows, columns);
         }
@@ -46,16 +52,8 @@ public class Field {
         return grid[0].length;
     }
 
-    public Boolean hasAgent(int x, int y, Class<?> type) {
-        return grid[y][x].hasAgent(type);
-    }
-
     public Agent getAgent(int x, int y, Class<?> type) {
         return grid[y][x].getAgent(type);
-    }
-
-    public Boolean hasPatch(int x, int y, Class<?> type) {
-        return grid[y][x].hasPatch(type);
     }
 
     public Patch getPatch(int x, int y) {

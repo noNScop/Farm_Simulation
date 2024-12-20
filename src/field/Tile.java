@@ -6,6 +6,19 @@ import patches.Patch;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The Tile class represents a single cell in the field grid that can contain multiple agents and/or a patch.
+ * Each tile can hold a patch (e.g., Carrot, DamagedLand) and a list of agents that occupy the tile. The class
+ * provides methods to manipulate agents and patches within a tile, including adding/removing agents, placing/removing
+ * patches, and retrieving information about the tile's contents.
+
+ * Key functionalities:
+ * 1. Adding or removing agents from the tile.
+ * 2. Placing and removing patches from the tile.
+ * 3. Retrieving agents of a specified type.
+ * 4. Constructing the string representation of the tile with symbols for its contents.
+ * 5. Calculating the width of the tile based on the length of the symbols of its agents and patch.
+ */
 class Tile {
     private Patch patch;
     private final List<Agent> agents;
@@ -30,15 +43,6 @@ class Tile {
         patch = null;
     }
 
-    boolean hasAgent(Class<?> type) {
-        for (Agent agent : agents) {
-            if (type.isInstance(agent)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     Agent getAgent(Class<?> type) {
         for (Agent agent : agents) {
             if (type.isInstance(agent)) {
@@ -46,14 +50,6 @@ class Tile {
             }
         }
         return null;
-    }
-
-    boolean hasPatch(Class<?> type) {
-        if (patch == null) {
-            return false;
-        } else {
-            return type.isInstance(patch);
-        }
     }
 
     Patch getPatch() {
