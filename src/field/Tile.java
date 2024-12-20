@@ -23,11 +23,7 @@ class Tile {
     }
 
     void emplacePatch(Patch patch) {
-        if (this.patch == null) {
-            this.patch = patch;
-        } else {
-            throw new IllegalStateException("Tile already contains a patch. Only one patch is allowed per tile.");
-        }
+        this.patch = patch;
     }
 
     void removePatch() {
