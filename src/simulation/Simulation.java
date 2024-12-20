@@ -7,14 +7,7 @@ import field.Field;
 import field.FieldHandler;
 import field.FieldObserver;
 
-import java.net.FileNameMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Simulation {
     private final Random rand;
@@ -23,7 +16,6 @@ public class Simulation {
     private final FieldHandler fieldHandler;
     private final ThreadManager threadManager;
     private final double rabbitSpawnProbability;
-    private final ReentrantLock agentLock;
 
     public Simulation(int farmers, double rabbitSpawnProbability) {
         rand = new Random();
@@ -31,7 +23,6 @@ public class Simulation {
         fieldObserver = new FieldObserver();
         fieldHandler = new FieldHandler(fieldObserver);
         threadManager = new ThreadManager();
-        agentLock = threadManager.getAgentLock();
 
         this.rabbitSpawnProbability = rabbitSpawnProbability;
 
@@ -58,7 +49,7 @@ public class Simulation {
     public void step() {
         threadManager.startTurn();
 
-        agentLock.lock();
+        threadManager.getLock().lock();
         try {
             while(threadManager.areAgentsRunning()) {
                 threadManager.getAgentsFinishedCondition().await();
@@ -67,7 +58,7 @@ public class Simulation {
             Thread.currentThread().interrupt();
             return;
         } finally {
-            agentLock.unlock();
+            threadManager.getLock().unlock();
         }
 
         for (int i = 0; i < fieldHandler.numPatches(); ++i) {

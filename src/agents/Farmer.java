@@ -7,11 +7,16 @@ import patches.DamagedLand;
 import patches.Patch;
 import simulation.ThreadManager;
 
-import java.util.concurrent.locks.Condition;
-
+/**
+ * The Farmer agent ("F") performs actions depending on the state of its current tile.
+ * If no patch exists, it plants carrots. If on a damaged land patch, he starts repairing unless another
+ * Farmer is already doing so. Stores its previous coordinates to enable interactions with the Dog agent,
+ * allowing the Dog to track rabbits the Farmer encountered in the prior simulation step.
+ * "F(x)" means that the farmer needs x more turns to fix the land.
+ */
 public class Farmer extends Agent {
-//    store coordinates before thr turn, so dog can correctly check if farmer encountered
-//    rabbit (in previous simulation step)
+    // store coordinates before the turn, so dog can correctly check if farmer encountered
+    // rabbit (in the previous simulation step)
     private int oldX;
     private int oldY;
 

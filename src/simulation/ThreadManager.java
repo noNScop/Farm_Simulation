@@ -10,8 +10,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadManager {
-    private final ReentrantLock turnLock;
-    private final ReentrantLock agentLock;
+    private final ReentrantLock lock;
     private final Condition turnStartCondition;
     private final Condition agentsFinishedCondition;
     private int agentsRunning;
@@ -19,10 +18,9 @@ public class ThreadManager {
     private boolean turnRunning;
 
     ThreadManager() {
-        turnLock = new ReentrantLock();
-        agentLock = new ReentrantLock();
-        turnStartCondition = turnLock.newCondition();
-        agentsFinishedCondition = agentLock.newCondition();
+        lock = new ReentrantLock();
+        turnStartCondition = lock.newCondition();
+        agentsFinishedCondition = lock.newCondition();
 
         simulationRunning = true;
         turnRunning = false;
@@ -32,12 +30,8 @@ public class ThreadManager {
         agentsRunning = agents;
     }
 
-    public ReentrantLock getAgentLock() {
-        return agentLock;
-    }
-
-    public ReentrantLock getTurnLock() {
-        return turnLock;
+    public ReentrantLock getLock() {
+        return lock;
     }
 
     public Condition getTurnStartCondition() {
@@ -45,12 +39,12 @@ public class ThreadManager {
     }
 
     void startTurn() {
-        turnLock.lock();
+        lock.lock();
         try {
             turnRunning = true;
             turnStartCondition.signalAll();  // Notify all threads waiting for the turn to start
         } finally {
-            turnLock.unlock();
+            lock.unlock();
         }
     }
 
@@ -59,7 +53,7 @@ public class ThreadManager {
     }
 
     public void decrementAgentsRunning() {
-        agentLock.lock();
+        lock.lock();
         try {
             if (agentsRunning > 0) {
                 --agentsRunning;
@@ -70,7 +64,7 @@ public class ThreadManager {
                 agentsFinishedCondition.signalAll();
             }
         } finally {
-            agentLock.unlock();
+            lock.unlock();
         }
     }
 
