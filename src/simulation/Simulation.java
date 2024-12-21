@@ -16,6 +16,7 @@ public class Simulation {
     private final FieldHandler fieldHandler;
     private final ThreadManager threadManager;
     private final DisplayManager displayManager;
+    private final InputHandler inputHandler;
     private final double rabbitSpawnProbability;
 
     public Simulation(int farmers, double rabbitSpawnProbability) {
@@ -25,6 +26,7 @@ public class Simulation {
         fieldHandler = new FieldHandler(fieldObserver);
         threadManager = new ThreadManager();
         displayManager = new DisplayManager(threadManager);
+        inputHandler = new InputHandler(threadManager, displayManager);
 
         this.rabbitSpawnProbability = rabbitSpawnProbability;
 
@@ -48,25 +50,34 @@ public class Simulation {
     }
 
     public void step() {
-        threadManager.startTurn();
-
-        threadManager.getSimulationLock().lock();
+        // Ensure that the terminal display is not updated during the update of the field
+        threadManager.getDisplayLock().lock();
         try {
-            while(threadManager.areAgentsRunning()) {
-                threadManager.getAgentsFinishedCondition().await();
+            threadManager.startTurn();
+
+            threadManager.getSimulationLock().lock();
+            try {
+                while(threadManager.areAgentsRunning()) {
+                    // Wait for all agents to finish
+                    threadManager.getAgentsFinishedCondition().await();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            } finally {
+                threadManager.getSimulationLock().unlock();
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return;
+
+            // Update all patches
+            for (int i = 0; i < fieldHandler.numPatches(); ++i) {
+                fieldHandler.getPatch(i).update();
+            }
+
+            // Handle all field events
+            fieldHandler.updateField();
         } finally {
-            threadManager.getSimulationLock().unlock();
+            threadManager.getDisplayLock().unlock();
         }
-
-        for (int i = 0; i < fieldHandler.numPatches(); ++i) {
-            fieldHandler.getPatch(i).update();
-        }
-
-        fieldHandler.updateField();
         threadManager.updateDisplay();
     }
 
@@ -83,12 +94,22 @@ public class Simulation {
         // Display the initial state of the field
         threadManager.updateDisplay();
 
-        for (int i = 0; i < 100; ++i) { // Simulation loop
+        inputHandler.setDaemon(true);
+        inputHandler.start();
+
+        while (true) { // Simulation loop
             try {
                 Thread.sleep(1000); // Wait for 1 second before next step
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            threadManager.getSimulationLock().lock();
+            if (inputHandler.stopSignal()) {
+                threadManager.getSimulationLock().unlock();
+                break;
+            }
+            threadManager.getSimulationLock().unlock();
 
             clearTerminal();
 
@@ -101,7 +122,7 @@ public class Simulation {
             // Perform the simulation step
             step();
         }
-
+        System.out.println("Stopping simulation...");
         threadManager.stopSimulation();
         threadManager.startTurn(); // this will terminate all Agent threads
         threadManager.updateDisplay(); // this will terminate the display thread

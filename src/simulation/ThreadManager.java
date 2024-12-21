@@ -41,12 +41,9 @@ public class ThreadManager {
 
     void startTurn() {
         simulationLock.lock();
-        try {
-            turnRunning = true;
-            turnStartCondition.signalAll();  // Notify all threads waiting for the turn to start
-        } finally {
-            simulationLock.unlock();
-        }
+        turnRunning = true;
+        turnStartCondition.signalAll();  // Notify all threads waiting for the turn to start
+        simulationLock.unlock();
     }
 
     public Condition getAgentsFinishedCondition() {
@@ -55,18 +52,15 @@ public class ThreadManager {
 
     public void decrementAgentsRunning() {
         simulationLock.lock();
-        try {
-            if (agentsRunning > 0) {
-                --agentsRunning;
-            }
-
-            if (agentsRunning == 0) {
-                turnRunning = false;
-                agentsFinishedCondition.signalAll();
-            }
-        } finally {
-            simulationLock.unlock();
+        if (agentsRunning > 0) {
+            --agentsRunning;
         }
+
+        if (agentsRunning == 0) {
+            turnRunning = false;
+            agentsFinishedCondition.signalAll();
+        }
+        simulationLock.unlock();
     }
 
     public boolean areAgentsRunning() {
@@ -99,12 +93,9 @@ public class ThreadManager {
 
     void updateDisplay() {
         displayLock.lock();
-        try {
-            displayUpToDate = false;
-            displayUpdateCondition.signal();
-        } finally {
-            displayLock.unlock();
-        }
+        displayUpToDate = false;
+        displayUpdateCondition.signal();
+        displayLock.unlock();
     }
 
     void displayUpdated() {
