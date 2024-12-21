@@ -52,7 +52,7 @@ public abstract class Agent implements Runnable {
 
     public void run() {
         while (true) {
-            threadManager.getLock().lock();
+            threadManager.getSimulationLock().lock();
             try {
                 while(!threadManager.hasTurnStarted()) {
                     // First wait for the turn to begin
@@ -62,11 +62,11 @@ public abstract class Agent implements Runnable {
                 Thread.currentThread().interrupt();
                 return;
             } finally {
-                threadManager.getLock().unlock();
+                threadManager.getSimulationLock().unlock();
             }
 
             // If agent has been removed or the simulation has come to an end, terminate the thread
-            if (!threadManager.getSimulationStatus() || isDestroyed()) {
+            if (threadManager.hasSimulationStopped() || isDestroyed()) {
                 return;
             }
 
@@ -75,7 +75,7 @@ public abstract class Agent implements Runnable {
 
             threadManager.decrementAgentsRunning();
 
-            threadManager.getLock().lock();
+            threadManager.getSimulationLock().lock();
             try {
                 while(threadManager.areAgentsRunning()) {
                     // Wait for all the agents to end
@@ -85,7 +85,7 @@ public abstract class Agent implements Runnable {
                 Thread.currentThread().interrupt();
                 return;
             } finally {
-                threadManager.getLock().unlock();
+                threadManager.getSimulationLock().unlock();
             }
         }
     }

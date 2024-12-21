@@ -4,28 +4,35 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadManager {
-    private final ReentrantLock lock;
+    private final ReentrantLock simulationLock;
+    private final ReentrantLock displayLock;
     private final Condition turnStartCondition;
     private final Condition agentsFinishedCondition;
+    private final Condition displayUpdateCondition;
     private int agentsRunning;
     private boolean simulationRunning;
     private boolean turnRunning;
+    private boolean displayUpToDate;
 
     ThreadManager() {
-        lock = new ReentrantLock();
-        turnStartCondition = lock.newCondition();
-        agentsFinishedCondition = lock.newCondition();
+        simulationLock = new ReentrantLock();
+        turnStartCondition = simulationLock.newCondition();
+        agentsFinishedCondition = simulationLock.newCondition();
+
+        displayLock = new ReentrantLock();
+        displayUpdateCondition = displayLock.newCondition();
 
         simulationRunning = true;
         turnRunning = false;
+        displayUpToDate = true;
     }
 
     void setAgentsRunning(int agents) {
         agentsRunning = agents;
     }
 
-    public ReentrantLock getLock() {
-        return lock;
+    public ReentrantLock getSimulationLock() {
+        return simulationLock;
     }
 
     public Condition getTurnStartCondition() {
@@ -33,12 +40,12 @@ public class ThreadManager {
     }
 
     void startTurn() {
-        lock.lock();
+        simulationLock.lock();
         try {
             turnRunning = true;
             turnStartCondition.signalAll();  // Notify all threads waiting for the turn to start
         } finally {
-            lock.unlock();
+            simulationLock.unlock();
         }
     }
 
@@ -47,7 +54,7 @@ public class ThreadManager {
     }
 
     public void decrementAgentsRunning() {
-        lock.lock();
+        simulationLock.lock();
         try {
             if (agentsRunning > 0) {
                 --agentsRunning;
@@ -58,7 +65,7 @@ public class ThreadManager {
                 agentsFinishedCondition.signalAll();
             }
         } finally {
-            lock.unlock();
+            simulationLock.unlock();
         }
     }
 
@@ -70,11 +77,37 @@ public class ThreadManager {
         simulationRunning = false;
     }
 
-    public boolean getSimulationStatus() {
-        return simulationRunning;
+    public boolean hasSimulationStopped() {
+        return !simulationRunning;
     }
 
     public boolean hasTurnStarted() {
         return turnRunning;
+    }
+
+    ReentrantLock getDisplayLock() {
+        return displayLock;
+    }
+
+    Condition getDisplayUpdateCondition() {
+        return displayUpdateCondition;
+    }
+
+    boolean isDisplayUpToDate() {
+        return displayUpToDate;
+    }
+
+    void updateDisplay() {
+        displayLock.lock();
+        try {
+            displayUpToDate = false;
+            displayUpdateCondition.signal();
+        } finally {
+            displayLock.unlock();
+        }
+    }
+
+    void displayUpdated() {
+        displayUpToDate = true;
     }
 }

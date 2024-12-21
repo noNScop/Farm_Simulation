@@ -15,6 +15,7 @@ public class Simulation {
     private final FieldObserver fieldObserver;
     private final FieldHandler fieldHandler;
     private final ThreadManager threadManager;
+    private final DisplayManager displayManager;
     private final double rabbitSpawnProbability;
 
     public Simulation(int farmers, double rabbitSpawnProbability) {
@@ -23,6 +24,7 @@ public class Simulation {
         fieldObserver = new FieldObserver();
         fieldHandler = new FieldHandler(fieldObserver);
         threadManager = new ThreadManager();
+        displayManager = new DisplayManager(threadManager);
 
         this.rabbitSpawnProbability = rabbitSpawnProbability;
 
@@ -49,7 +51,7 @@ public class Simulation {
     public void step() {
         threadManager.startTurn();
 
-        threadManager.getLock().lock();
+        threadManager.getSimulationLock().lock();
         try {
             while(threadManager.areAgentsRunning()) {
                 threadManager.getAgentsFinishedCondition().await();
@@ -58,7 +60,7 @@ public class Simulation {
             Thread.currentThread().interrupt();
             return;
         } finally {
-            threadManager.getLock().unlock();
+            threadManager.getSimulationLock().unlock();
         }
 
         for (int i = 0; i < fieldHandler.numPatches(); ++i) {
@@ -66,7 +68,7 @@ public class Simulation {
         }
 
         fieldHandler.updateField();
-        field.displayGrid();
+        threadManager.updateDisplay();
     }
 
     public void runSimulation() {
@@ -76,6 +78,9 @@ public class Simulation {
             thread.setDaemon(true);
             thread.start();
         }
+
+        displayManager.setDaemon(true);
+        displayManager.start();
 
         for (int i = 0; i < 100; ++i) { // Simulation loop
             try {
@@ -98,6 +103,7 @@ public class Simulation {
 
         threadManager.stopSimulation();
         threadManager.startTurn(); // this will terminate all Agent threads
+        threadManager.updateDisplay(); // this will terminate the display thread
     }
 
     private static void clearTerminal() {
