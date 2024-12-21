@@ -78,5 +78,20 @@ public class DisplayManager extends Thread {
 
     void toggleShowLegend() {
         showLegend = !showLegend;
+        threadManager.getDisplayLock().lock();
+        clearTerminal();
+        displayGrid();
+        displayMenu();
+        if (showLegend) {
+            displayLegend();
+        }
+        threadManager.getDisplayLock().unlock();
+    }
+
+    void clearTerminal() {
+        // print line in case the terminal doesn't support ANSI escape code e.g. in IDE
+        System.out.println();
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }

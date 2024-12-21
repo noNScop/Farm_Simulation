@@ -35,7 +35,7 @@ public class Simulation {
             fieldHandler.addAgent(farmer);
             fieldHandler.addAgent(new Dog(fieldObserver, threadManager, farmer));
         }
-        clearTerminal();
+        displayManager.clearTerminal();
     }
 
     private void tryAddRabbit() {
@@ -111,7 +111,7 @@ public class Simulation {
             }
             threadManager.getSimulationLock().unlock();
 
-            clearTerminal();
+            displayManager.clearTerminal();
 
             // Dynamically add new Rabbit agents
             tryAddRabbit();
@@ -126,12 +126,5 @@ public class Simulation {
         threadManager.stopSimulation();
         threadManager.startTurn(); // this will terminate all Agent threads
         threadManager.updateDisplay(); // this will terminate the display thread
-    }
-
-    private static void clearTerminal() {
-        // print line in case the terminal doesn't support ANSI escape code e.g. in IDE
-        System.out.println();
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
     }
 }
