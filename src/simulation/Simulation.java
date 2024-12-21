@@ -34,7 +34,6 @@ public class Simulation {
             fieldHandler.addAgent(new Dog(fieldObserver, threadManager, farmer));
         }
         clearTerminal();
-        field.displayGrid();
     }
 
     private void tryAddRabbit() {
@@ -81,6 +80,8 @@ public class Simulation {
 
         displayManager.setDaemon(true);
         displayManager.start();
+        // Display the initial state of the field
+        threadManager.updateDisplay();
 
         for (int i = 0; i < 100; ++i) { // Simulation loop
             try {
