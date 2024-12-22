@@ -3,6 +3,13 @@ package simulation;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * The ThreadManager class coordinates synchronization between threads in the simulation, including
+ * the simulation's main loop, agent behavior, and display updates. It manages locks and conditions
+ * for controlling when agents can start or finish their turn, when the simulation step can be completed,
+ * and when the display should be updated. The class ensures that the simulation operates in a multithreaded
+ * environment by coordinating the synchronization of agents' actions and controlling the display's state.
+ */
 public class ThreadManager {
     private final ReentrantLock simulationLock;
     private final ReentrantLock displayLock;

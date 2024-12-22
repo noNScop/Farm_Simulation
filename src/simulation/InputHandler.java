@@ -2,6 +2,12 @@ package simulation;
 
 import java.util.Scanner;
 
+/**
+ * The InputHandler class handles user input in a separate thread during the simulation.
+ * It listens for specific commands (e.g., toggling the legend or stopping the simulation)
+ * and notifies the relevant managers to take appropriate actions.
+ * It also ensures that only valid inputs ("1" or "2") are processed, otherwise prompts the user again.
+ */
 public class InputHandler extends Thread {
     private final ThreadManager threadManager;
     private final DisplayManager displayManager;

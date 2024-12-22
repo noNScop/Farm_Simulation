@@ -5,6 +5,17 @@ import field.Field;
 import java.io.*;
 import java.util.Scanner;
 
+/**
+ * The SimulationRunner class is the main entry point for a simulation program.
+ * It provides a menu-driven interface to:
+ * - Adjust, load, and save simulation settings
+ * - Run the simulation
+ * - Exit the program
+
+ * Users can configure parameters like field size, farmer count, spawn probability,
+ * and step delay, with validation and default value support. Settings can be saved
+ * to or loaded from a file for reuse.
+ */
 public class SimulationRunner {
     private static final Scanner scanner = new Scanner(System.in);
     private static int fieldWidth = 10;

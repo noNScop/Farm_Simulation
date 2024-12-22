@@ -9,6 +9,14 @@ import field.FieldObserver;
 
 import java.util.Random;
 
+/**
+ * The Simulation class manages the core logic of the simulation, including initializing agents
+ * (Farmers, Dogs, and Rabbits), running the simulation steps, and handling interactions between agents
+ * and the field. It coordinates with various components like the field handler, display manager,
+ * and input handler to simulate the environment, update the field, and manage agent behavior over multiple steps.
+ * It runs in a multithreaded environment and allows for dynamic events like adding new rabbits during the
+ * simulation.
+ */
 public class Simulation {
     private final Random rand;
     public Field field;

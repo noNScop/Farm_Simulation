@@ -2,6 +2,28 @@ package simulation;
 
 import field.Field;
 
+/**
+ * The DisplayManager class is responsible for handling the visual output of the simulation.
+ * It runs as a separate thread to manage real-time updates and interaction during the simulation.
+
+ * Key responsibilities:
+ * - Display the simulation grid.
+ * - Display a simulation menu with options to toggle the legend or terminate the simulation.
+ * - Optionally display a legend explaining grid symbols.
+ * - Respond to input events triggered by the user through the ThreadManager.
+
+ * Methods:
+ * - run(): Continuously updates the display based on simulation state.
+ * - toggleShowLegend(): Toggles the visibility of the legend in the display.
+ * - clearTerminal(): Clears the terminal output for better user experience.
+ * - displayGrid(): Outputs the current state of the simulation field.
+ * - displayMenu(): Displays the interactive menu with current options.
+ * - displayLegend(): Displays the legend of grid symbols.
+
+ * Thread-Safety:
+ * - Utilizes the locks and conditions from ThreadManager to synchronize updates between threads
+ *   and ensure the display is correctly updated during the simulation.
+ */
 public class DisplayManager extends Thread {
     private final Field field;
     private final ThreadManager threadManager;
