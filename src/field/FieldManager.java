@@ -15,13 +15,13 @@ import java.util.List;
  * This class also ensures that all operations on agents and patches are properly reflected
  * in the underlying field grid, providing synchronization between agent state and the environment.
  */
-public class FieldHandler {
+public class FieldManager {
     private final FieldObserver fieldObserver;
     private final Field field;
     private final List<Agent> agents = new LinkedList<>();
     private final List<Patch> patches = new LinkedList<>();
 
-    public FieldHandler(FieldObserver fieldObserver) {
+    public FieldManager(FieldObserver fieldObserver) {
         this.fieldObserver = fieldObserver;
         field = Field.getInstance();
     }

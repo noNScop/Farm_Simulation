@@ -4,7 +4,7 @@ import agents.Dog;
 import agents.Farmer;
 import agents.Rabbit;
 import field.Field;
-import field.FieldHandler;
+import field.FieldManager;
 import field.FieldObserver;
 
 import java.util.Random;
@@ -21,7 +21,7 @@ public class Simulation {
     private final Random rand;
     public Field field;
     private final FieldObserver fieldObserver;
-    private final FieldHandler fieldHandler;
+    private final FieldManager fieldManager;
     private final ThreadManager threadManager;
     private final DisplayManager displayManager;
     private final InputHandler inputHandler;
@@ -33,7 +33,7 @@ public class Simulation {
         field = Field.getInstance();
         this.offset = offset;
         fieldObserver = new FieldObserver();
-        fieldHandler = new FieldHandler(fieldObserver);
+        fieldManager = new FieldManager(fieldObserver);
         threadManager = new ThreadManager();
         displayManager = new DisplayManager(threadManager);
         inputHandler = new InputHandler(threadManager, displayManager);
@@ -42,8 +42,8 @@ public class Simulation {
 
         for (int i = 0; i < farmers; ++i) {// Start with the semaphore blocked
             Farmer farmer = new Farmer(fieldObserver, threadManager);
-            fieldHandler.addAgent(farmer);
-            fieldHandler.addAgent(new Dog(fieldObserver, threadManager, farmer));
+            fieldManager.addAgent(farmer);
+            fieldManager.addAgent(new Dog(fieldObserver, threadManager, farmer));
         }
         displayManager.clearTerminal();
     }
@@ -51,7 +51,7 @@ public class Simulation {
     private void tryAddRabbit() {
         if (rabbitSpawnProbability > rand.nextDouble()) {
             Rabbit newRabbit = new Rabbit(fieldObserver, threadManager);
-            fieldHandler.addAgent(newRabbit);
+            fieldManager.addAgent(newRabbit);
 
             Thread rabbitThread = new Thread(newRabbit);
             rabbitThread.setDaemon(true);
@@ -79,12 +79,12 @@ public class Simulation {
             }
 
             // Update all patches
-            for (int i = 0; i < fieldHandler.numPatches(); ++i) {
-                fieldHandler.getPatch(i).update();
+            for (int i = 0; i < fieldManager.numPatches(); ++i) {
+                fieldManager.getPatch(i).update();
             }
 
             // Handle all field events
-            fieldHandler.updateField();
+            fieldManager.updateField();
         } finally {
             threadManager.getDisplayLock().unlock();
         }
@@ -93,8 +93,8 @@ public class Simulation {
 
     public void runSimulation() {
         // Initialize threads for existing agents
-        for (int i = 0; i < fieldHandler.numAgents(); ++i) {
-            Thread thread = new Thread(fieldHandler.getAgent(i));
+        for (int i = 0; i < fieldManager.numAgents(); ++i) {
+            Thread thread = new Thread(fieldManager.getAgent(i));
             thread.setDaemon(true);
             thread.start();
         }
@@ -127,7 +127,7 @@ public class Simulation {
             tryAddRabbit();
 
             // set the current number of agents
-            threadManager.setAgentsRunning(fieldHandler.numAgents());
+            threadManager.setAgentsRunning(fieldManager.numAgents());
 
             // Perform the simulation step
             step();
