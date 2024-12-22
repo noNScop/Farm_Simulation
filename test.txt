@@ -1,5 +1,0 @@
-fieldWidth=1000
-fieldHeight=10
-farmerCount=2
-rabbitSpawnProbability=0.2
-offset=1000
