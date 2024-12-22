@@ -18,10 +18,12 @@ public class Simulation {
     private final DisplayManager displayManager;
     private final InputHandler inputHandler;
     private final double rabbitSpawnProbability;
+    private final int offset;
 
-    public Simulation(int farmers, double rabbitSpawnProbability) {
+    public Simulation(int farmers, double rabbitSpawnProbability, int offset) {
         rand = new Random();
         field = Field.getInstance();
+        this.offset = offset;
         fieldObserver = new FieldObserver();
         fieldHandler = new FieldHandler(fieldObserver);
         threadManager = new ThreadManager();
@@ -99,7 +101,7 @@ public class Simulation {
 
         while (true) { // Simulation loop
             try {
-                Thread.sleep(1000); // Wait for 1 second before next step
+                Thread.sleep(offset); // Wait for 1 second before next step
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

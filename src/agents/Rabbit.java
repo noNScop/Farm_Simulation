@@ -24,14 +24,6 @@ public class Rabbit extends Agent {
         setSymbol();
     }
 
-    public Rabbit(FieldObserver fieldObserver, ThreadManager threadManager, double stopEatingProbability) {
-        super(fieldObserver, threadManager);
-
-        isEating = false;
-        this.stopEatingProbability = stopEatingProbability;
-        setSymbol();
-    }
-
     @Override
     protected void setSymbol() {
         if (!isEating) {

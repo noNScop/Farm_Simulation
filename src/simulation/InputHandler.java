@@ -29,7 +29,6 @@ public class InputHandler extends Thread {
                 threadManager.getSimulationLock().lock();
                 try {
                     stopSimulation = true;
-                    scanner.close();
                 } finally {
                     threadManager.getSimulationLock().unlock();
                 }
