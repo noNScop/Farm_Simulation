@@ -24,7 +24,7 @@ public class Simulation {
     private final FieldManager fieldManager;
     private final ThreadManager threadManager;
     private final DisplayManager displayManager;
-    private final InputHandler inputHandler;
+    private final InputManager inputManager;
     private final double rabbitSpawnProbability;
     private final int offset;
 
@@ -36,7 +36,7 @@ public class Simulation {
         fieldManager = new FieldManager(fieldObserver);
         threadManager = new ThreadManager();
         displayManager = new DisplayManager(threadManager);
-        inputHandler = new InputHandler(threadManager, displayManager);
+        inputManager = new InputManager(threadManager, displayManager);
 
         this.rabbitSpawnProbability = rabbitSpawnProbability;
 
@@ -104,8 +104,8 @@ public class Simulation {
         // Display the initial state of the field
         threadManager.updateDisplay();
 
-        inputHandler.setDaemon(true);
-        inputHandler.start();
+        inputManager.setDaemon(true);
+        inputManager.start();
 
         while (true) { // Simulation loop
             try {
@@ -115,7 +115,7 @@ public class Simulation {
             }
 
             threadManager.getSimulationLock().lock();
-            if (inputHandler.stopSignal()) {
+            if (inputManager.stopSignal()) {
                 threadManager.getSimulationLock().unlock();
                 break;
             }
